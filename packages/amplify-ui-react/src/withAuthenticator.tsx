@@ -10,23 +10,21 @@ import { Logger } from '@aws-amplify/core';
 
 const logger = new Logger('withAuthenticator');
 
-export function withAuthenticator(
-	Component: ComponentType,
+export function withAuthenticator<T extends object = {}>(
+	Component: ComponentType<T>,
 	authenticatorProps?: ComponentPropsWithRef<typeof AmplifyAuthenticator>
 ) {
-	const AppWithAuthenticator: FunctionComponent = props => {
+	const AppWithAuthenticator = props => {
 		const [signedIn, setSignedIn] = React.useState(false);
 
 		React.useEffect(() => {
 			appendToCognitoUserAgent('withAuthenticator');
-			
 			// checkUser returns an "unsubscribe" function to stop side-effects
 			return checkUser();
 		}, []);
 
 		function checkUser() {
 			setUser();
-			
 			return onAuthUIStateChange(authState => {
 				if (authState === AuthState.SignedIn) {
 					setSignedIn(true);
@@ -52,6 +50,7 @@ export function withAuthenticator(
 				</AmplifyContainer>
 			);
 		}
+		// error here
 		return <Component />;
 	};
 
